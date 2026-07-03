@@ -6,6 +6,7 @@ import SymptomChecker from "./components/SymptomChecker";
 import Services from "./components/Services";
 import Contact from "./components/Contact";
 import ProfileManager from "./components/ProfileManager";
+import AnimationViewer from "./components/AnimationViewer";
 import Footer from "./components/Footer";
 import { Child, Appointment, ContactMessage } from "./types";
 import { defaultChildren } from "./data";
@@ -136,6 +137,33 @@ export default function App() {
               </div>
             </section>
 
+            {/* Interactive Diagnostics Tour Promotion Card */}
+            <section className="bg-gradient-to-r from-[#1a4f9c] to-[#2c6cb5] text-white py-8 my-6 rounded-3xl container mx-auto px-6 max-w-5xl shadow-xl border border-blue-200/10 relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -mr-16 -mt-16 pointer-events-none"></div>
+              <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
+                <div className="text-left max-w-xl">
+                  <span className="bg-pink-400 text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider mb-3 inline-block">
+                    New Hospital Feature
+                  </span>
+                  <h3 className="text-xl md:text-2xl font-extrabold tracking-tight">
+                    Interactive Virtual Diagnostics Tour
+                  </h3>
+                  <p className="text-blue-100 text-sm mt-2 font-medium leading-relaxed">
+                    Step inside our advanced pediatric facility! Play, pause, scroll, and inspect 240 high-resolution diagnostic frame-by-frame scans inside our newly opened interactive virtual diagnostics suite.
+                  </p>
+                </div>
+                <button
+                  onClick={() => {
+                    setActiveTab("tour");
+                    window.scrollTo({ top: 0, behavior: "smooth" });
+                  }}
+                  className="bg-white text-[#1a4f9c] hover:bg-gray-100 font-extrabold px-6 py-3 rounded-full text-sm shadow-md transition-all shrink-0 cursor-pointer"
+                >
+                  Launch Interactive Tour &rarr;
+                </button>
+              </div>
+            </section>
+
             {/* Pediatric Diseases Grid (Fully Interactive) */}
             <Diseases searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
 
@@ -161,6 +189,12 @@ export default function App() {
         {activeTab === "symptom-checker" && (
           <div className="animate-fade-in">
             <SymptomChecker />
+          </div>
+        )}
+
+        {activeTab === "tour" && (
+          <div className="animate-fade-in">
+            <AnimationViewer />
           </div>
         )}
 

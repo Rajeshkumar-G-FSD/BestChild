@@ -77,6 +77,16 @@ export default function Navigation({
             AI Symptom Checker
           </button>
           <button
+            onClick={() => setActiveTab("tour")}
+            className={`px-1 py-1 transition-all cursor-pointer border-b-2 ${
+              activeTab === "tour"
+                ? "border-[#1a4f9c] text-[#1a4f9c]"
+                : "border-transparent text-gray-500 hover:text-[#1a4f9c]"
+            }`}
+          >
+            Interactive Tour
+          </button>
+          <button
             onClick={() => setActiveTab("doctors")}
             className={`px-1 py-1 transition-all cursor-pointer border-b-2 ${
               activeTab === "doctors"
