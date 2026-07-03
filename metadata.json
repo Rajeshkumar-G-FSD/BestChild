@@ -1,0 +1,6 @@
+{
+  "name": "best Children Hospital",
+  "description": "Pediatric healthcare application with childhood disease guides, doctor booking, and AI-powered care advice.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
