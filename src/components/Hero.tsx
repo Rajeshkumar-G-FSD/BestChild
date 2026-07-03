@@ -1,5 +1,5 @@
-import React from "react";
-import { ArrowRight, Sparkles, HeartPulse, ShieldAlert } from "lucide-react";
+import React, { useRef, useState, useEffect } from "react";
+import { Activity } from "lucide-react";
 
 interface HeroProps {
   onLearnMore: () => void;
@@ -7,77 +7,144 @@ interface HeroProps {
 }
 
 export default function Hero({ onLearnMore, onCheckSymptoms }: HeroProps) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [currentFrame, setCurrentFrame] = useState<number>(1);
+  const [preloadProgress, setPreloadProgress] = useState<number>(0);
+  const [isPreloadComplete, setIsPreloadComplete] = useState<boolean>(false);
+
+  const totalFrames = 240;
+
+  // Format frame number to match file names (e.g., 5 -> "005")
+  const formatFrameNumber = (num: number): string => {
+    return num.toString().padStart(3, "0");
+  };
+
+  // Get frame image URL
+  const getFrameUrl = (num: number): string => {
+    return `/images/ezgif-frame-${formatFrameNumber(num)}.jpg`;
+  };
+
+  // Programmatic parallel preloading to ensure instant, lag-free rendering
+  useEffect(() => {
+    let loadedCount = 0;
+    const cache: HTMLImageElement[] = [];
+    const batchSize = 10; // Load images in batches to prevent network congestion
+
+    const preloadBatch = (startIndex: number) => {
+      const endIndex = Math.min(startIndex + batchSize, totalFrames);
+      let batchLoaded = 0;
+
+      for (let i = startIndex; i <= endIndex; i++) {
+        const img = new Image();
+        img.src = getFrameUrl(i);
+        
+        const onImageLoad = () => {
+          loadedCount++;
+          batchLoaded++;
+          
+          const progress = Math.round((loadedCount / totalFrames) * 100);
+          setPreloadProgress(progress);
+
+          if (loadedCount === totalFrames) {
+            setIsPreloadComplete(true);
+          }
+
+          // Trigger next batch when this batch completes
+          if (batchLoaded === (endIndex - startIndex + 1) && endIndex < totalFrames) {
+            preloadBatch(endIndex + 1);
+          }
+        };
+
+        img.onload = onImageLoad;
+        img.onerror = onImageLoad; // Continue even on failure
+        cache.push(img);
+      }
+    };
+
+    preloadBatch(1);
+  }, []);
+
+  // requestAnimationFrame scroll listener for perfect 60fps/120fps fluid scrolling
+  useEffect(() => {
+    let requestRef: number;
+
+    const handleScroll = () => {
+      const container = containerRef.current;
+      if (!container) return;
+
+      const rect = container.getBoundingClientRect();
+      const viewportHeight = window.innerHeight;
+      const totalScrollRange = rect.height - viewportHeight;
+
+      if (totalScrollRange <= 0) return;
+
+      // Scrolled height from the top of the container
+      const scrolled = -rect.top;
+      
+      // Calculate scroll progress (clamped strictly between 0 and 1)
+      const progress = Math.max(0, Math.min(1, scrolled / totalScrollRange));
+
+      // Map progress to frame index 1 to 240
+      const calculatedFrame = Math.round(progress * (totalFrames - 1)) + 1;
+      
+      setCurrentFrame(calculatedFrame);
+    };
+
+    const onScrollUpdate = () => {
+      requestRef = requestAnimationFrame(handleScroll);
+    };
+
+    window.addEventListener("scroll", onScrollUpdate, { passive: true });
+    // Execute initially
+    handleScroll();
+
+    return () => {
+      window.removeEventListener("scroll", onScrollUpdate);
+      cancelAnimationFrame(requestRef);
+    };
+  }, []);
+
   return (
-    <section className="bg-[#f7aab7] relative pt-12 pb-16 md:py-20 overflow-hidden" id="hero-section">
-      <div className="container mx-auto px-4 max-w-6xl relative z-10 flex flex-col md:flex-row items-center">
-        {/* Left Column: Content */}
-        <div className="md:w-1/2 pr-0 md:pr-10 mb-10 md:mb-0 text-left">
-          <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm px-3 py-1.5 rounded-full text-sm font-semibold text-[#1a4f9c] mb-6">
-            <Sparkles className="w-4 h-4" />
-            <span>AI-Enhanced Care Advisory</span>
-          </div>
-
-          <h1 className="text-4xl md:text-5xl font-extrabold text-[#1a4f9c] leading-tight mb-6">
-            Child Disease and <br />
-            Treatment
-          </h1>
-
-          <p className="text-[#1a4f9c] text-lg mb-8 max-w-lg font-medium leading-relaxed">
-            Child Disease and treatment web is for childhood diseases, treatment and it's suitable for children's doctors. You can easy book doctors or children experts for solve your children disease.
-          </p>
-
-          <div className="flex flex-col sm:flex-row gap-4">
-            <button
-              onClick={onCheckSymptoms}
-              className="bg-[#1a4f9c] text-white hover:bg-[#133a75] px-8 py-3.5 rounded-full font-bold shadow-lg transition-all transform hover:-translate-y-0.5 flex items-center justify-center gap-2 cursor-pointer"
-              id="hero-symptom-btn"
-            >
-              AI Symptom Checker
-              <ArrowRight className="w-5 h-5" />
-            </button>
-            <button
-              onClick={onLearnMore}
-              className="bg-white/90 text-[#1a4f9c] hover:bg-white px-8 py-3.5 rounded-full font-bold shadow-md transition-all cursor-pointer flex items-center justify-center"
-              id="hero-learn-more-btn"
-            >
-              Learn More
-            </button>
-          </div>
-
-          {/* Mini benefits stats row */}
-          <div className="grid grid-cols-3 gap-4 mt-10 border-t border-[#1a4f9c]/10 pt-6">
-            <div className="flex flex-col">
-              <span className="text-2xl font-black text-[#1a4f9c]">100%</span>
-              <span className="text-xs text-[#1a4f9c]/80 font-semibold uppercase tracking-wider">Secure Data</span>
+    /* Outer scroll track container - pins the inner section during the animation */
+    <div 
+      ref={containerRef} 
+      className="relative w-full h-[250vh]" 
+      id="hero-scroll-container"
+    >
+      {/* Sticky viewport content - remains locked on screen while scrolling */}
+      <div className="sticky top-0 left-0 w-full h-screen overflow-hidden flex flex-col justify-between bg-slate-950 select-none">
+        
+        {/* Big Screen Central Image Showcase */}
+        <div className="flex-grow w-full h-full relative">
+          
+          {/* Loader Overlay */}
+          {!isPreloadComplete && (
+            <div className="absolute inset-0 bg-slate-950 z-30 flex flex-col items-center justify-center p-6 text-center">
+              <Activity className="w-10 h-10 text-[#1a4f9c] animate-pulse mb-3" />
+              <p className="text-sm font-bold text-gray-200">Preloading Clinical Sequences...</p>
+              <div className="w-48 bg-slate-800 h-1.5 rounded-full mt-3 overflow-hidden">
+                <div 
+                  className="bg-[#1a4f9c] h-1.5 rounded-full transition-all duration-300"
+                  style={{ width: `${preloadProgress}%` }}
+                ></div>
+              </div>
+              <span className="text-xs text-gray-500 font-mono mt-2">{preloadProgress}% Loaded</span>
             </div>
-            <div className="flex flex-col">
-              <span className="text-2xl font-black text-[#1a4f9c]">24/7</span>
-              <span className="text-xs text-[#1a4f9c]/80 font-semibold uppercase tracking-wider">AI Support</span>
-            </div>
-            <div className="flex flex-col">
-              <span className="text-2xl font-black text-[#1a4f9c]">Top</span>
-              <span className="text-xs text-[#1a4f9c]/80 font-semibold uppercase tracking-wider">Pediatricians</span>
-            </div>
-          </div>
-        </div>
+          )}
 
-        {/* Right Column: Hero Image */}
-        <div className="md:w-1/2 relative h-96 md:h-[480px] w-full flex items-center justify-center">
-          <div className="relative w-full h-full max-w-lg md:max-w-none">
-            {/* Background elements */}
-            <div className="absolute inset-4 rounded-[40px] bg-white/25 transform rotate-3 -z-10"></div>
-            <div className="absolute inset-8 rounded-[40px] bg-white/10 transform -rotate-3 -z-10"></div>
-
-            {/* Main Baby Image */}
+          {/* Big-screen responsive image - Completely Full Width and Full Height with no UI overlay */}
+          <div className="relative w-full h-full flex items-center justify-center bg-slate-950">
             <img
-              alt="Happy baby under towel"
-              className="w-full h-full object-cover object-center rounded-[32px] shadow-2xl scale-100 md:scale-105 transform transition-transform hover:scale-110 duration-700"
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuAxVwG2OSWJGpD4BDgNXoC2OU3u8tqEP8-YFL9KQfACine0AHSfmck2ILnwk6VlgJwynYwo4EdhC6p9S0hVV9VTMrQKw5OGsmf3m-ZKs3cQJFeIccgwpfKu6WTPOWnOCU_b8cg5lY0mnBlPQBykoIryYxezUoz3u2JPYmA73UEafsHTPuLbE8faoE7x0nLWZfeLNofqdgvppWgyXh2ABlXux1EOGiLiO_caR7JvhPFVVpV8hqJ1as9E96iKo4o2W_GYao9SMVCFfJ7X"
-              id="hero-baby-image"
+              src={getFrameUrl(currentFrame)}
+              alt={`Diagnostic Scan Frame ${currentFrame}`}
+              className="w-full h-full object-cover select-none pointer-events-none transition-all duration-75"
+              draggable={false}
             />
           </div>
+
         </div>
+
       </div>
-    </section>
+    </div>
   );
 }

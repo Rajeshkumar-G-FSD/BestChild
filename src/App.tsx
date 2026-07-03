@@ -6,6 +6,7 @@ import SymptomChecker from "./components/SymptomChecker";
 import Services from "./components/Services";
 import Contact from "./components/Contact";
 import ProfileManager from "./components/ProfileManager";
+import AppointmentPortal from "./components/AppointmentPortal";
 import AnimationViewer from "./components/AnimationViewer";
 import Footer from "./components/Footer";
 import { Child, Appointment, ContactMessage } from "./types";
@@ -218,6 +219,12 @@ export default function App() {
               appointments={appointments}
               onCancelAppointment={handleCancelAppointment}
             />
+          </div>
+        )}
+
+        {activeTab === "appointment-portal" && (
+          <div className="animate-fade-in">
+            <AppointmentPortal />
           </div>
         )}
       </main>

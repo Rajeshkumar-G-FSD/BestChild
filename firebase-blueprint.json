@@ -1,0 +1,44 @@
+{
+  "entities": {
+    "Appointment": {
+      "title": "Appointment",
+      "description": "Pediatric booking appointment details",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "kidName": { "type": "string" },
+        "age": { "type": "string" },
+        "contactNumber": { "type": "string" },
+        "guardianType": { "type": "string" },
+        "guardianName": { "type": "string" },
+        "issueType": { "type": "string" },
+        "issueDetail": { "type": "string" },
+        "department": { "type": "string" },
+        "doctor": { "type": "string" },
+        "date": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["kidName", "age", "contactNumber", "guardianType", "guardianName", "issueType", "department", "doctor", "date"]
+    },
+    "AdminConfig": {
+      "title": "AdminConfig",
+      "description": "Credentials and configuration for administrative login",
+      "type": "object",
+      "properties": {
+        "username": { "type": "string" },
+        "password": { "type": "string" }
+      },
+      "required": ["username", "password"]
+    }
+  },
+  "firestore": {
+    "/appointments/{appointmentId}": {
+      "schema": "Appointment",
+      "description": "Appointments for pediatric services"
+    },
+    "/admins/{adminId}": {
+      "schema": "AdminConfig",
+      "description": "Admin configuration containing username and password"
+    }
+  }
+}

@@ -1,5 +1,5 @@
 import React from "react";
-import { Search, User, Baby, Heart, Shield, Plus, List } from "lucide-react";
+import { Search, User, Baby, Heart, Shield, Plus, List, Lock, CalendarRange } from "lucide-react";
 
 interface NavigationProps {
   activeTab: string;
@@ -106,6 +106,16 @@ export default function Navigation({
           >
             My Children & Appointments
           </button>
+          <button
+            onClick={() => setActiveTab("appointment-portal")}
+            className={`px-1 py-1 transition-all cursor-pointer border-b-2 ${
+              activeTab === "appointment-portal"
+                ? "border-[#1a4f9c] text-[#1a4f9c]"
+                : "border-transparent text-gray-500 hover:text-[#1a4f9c]"
+            }`}
+          >
+            Kids Scheduler
+          </button>
         </nav>
 
         {/* Search & Profile Icons */}
@@ -133,6 +143,20 @@ export default function Navigation({
             id="nav-profile-btn"
           >
             <User className="w-5 h-5" />
+          </button>
+
+          <button
+            onClick={() => setActiveTab("appointment-portal")}
+            className={`p-2 rounded-full border flex items-center gap-1 text-xs font-bold ${
+              activeTab === "appointment-portal"
+                ? "bg-[#1a4f9c] text-white border-[#1a4f9c]"
+                : "text-rose-600 border-rose-200 bg-rose-50/50 hover:bg-rose-50"
+            } cursor-pointer transition-all`}
+            title="Admin Dashboard Login"
+            id="nav-admin-btn"
+          >
+            <Lock className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">Admin Login</span>
           </button>
         </div>
       </div>

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { ContactMessage } from "../types";
-import { Mail, Phone, MapPin, Send, CheckCircle2 } from "lucide-react";
+import { Mail, Phone, MapPin, Send, CheckCircle2, Clock, Calendar } from "lucide-react";
 
 interface ContactProps {
   onSendMessage: (message: ContactMessage) => void;
@@ -45,7 +45,99 @@ export default function Contact({ onSendMessage, messageList }: ContactProps) {
   };
 
   return (
-    <section className="py-20 bg-white relative text-left" id="contact-section">
+    <section className="py-20 bg-slate-50 relative text-left" id="contact-section">
+      <div className="container mx-auto px-4 max-w-5xl mb-16">
+        <div className="text-center max-w-2xl mx-auto mb-12">
+          <span className="bg-pink-100 text-[#1a4f9c] text-xs font-black px-4 py-1.5 rounded-full uppercase tracking-wider">
+            Hospital Information
+          </span>
+          <h2 className="text-3xl sm:text-4xl font-extrabold text-[#1a4f9c] tracking-tight mt-3">
+            Contact &amp; Hours of Operation
+          </h2>
+          <p className="text-gray-500 text-sm mt-2 font-medium">
+            Find us in Erode or connect with our pediatric specialists anytime 24/7.
+          </p>
+        </div>
+
+        {/* 3-Column Info Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {/* Address Card */}
+          <div className="bg-white rounded-3xl p-6 shadow-md border border-gray-100 flex flex-col justify-between hover:translate-y-[-4px] transition-all duration-300">
+            <div>
+              <div className="p-3 bg-pink-50 text-[#1a4f9c] rounded-2xl w-fit mb-4">
+                <MapPin className="w-6 h-6" />
+              </div>
+              <h3 className="font-extrabold text-[#1a4f9c] text-base mb-2">Hospital Address</h3>
+              <p className="text-xs text-gray-500 font-bold leading-relaxed">
+                947, EVN road, ERODE<br />
+                Opp. LKM HOSPITAL<br />
+                Near Surampatty, Nall road<br />
+                Erode, Tamil Nadu 638009
+              </p>
+            </div>
+            <div className="mt-4 pt-4 border-t border-gray-50">
+              <a 
+                href="https://maps.google.com/?q=947,EVN+road,+ERODE+Opp.+LKM+HOSPITAL" 
+                target="_blank" 
+                rel="noreferrer"
+                className="text-xs text-pink-500 font-extrabold hover:underline flex items-center gap-1"
+              >
+                View on Google Maps &rarr;
+              </a>
+            </div>
+          </div>
+
+          {/* Phone Card */}
+          <div className="bg-white rounded-3xl p-6 shadow-md border border-gray-100 flex flex-col justify-between hover:translate-y-[-4px] transition-all duration-300">
+            <div>
+              <div className="p-3 bg-pink-50 text-[#1a4f9c] rounded-2xl w-fit mb-4">
+                <Phone className="w-6 h-6" />
+              </div>
+              <h3 className="font-extrabold text-[#1a4f9c] text-base mb-2">Emergency Phone</h3>
+              <p className="text-2xl font-black text-[#1a4f9c] tracking-tight mb-1">
+                099943 72322
+              </p>
+              <p className="text-xs text-gray-500 font-semibold leading-relaxed">
+                Call for emergency ambulance, neonatal ICU coordination, or children's doctors booking.
+              </p>
+            </div>
+            <div className="mt-4 pt-4 border-t border-gray-50">
+              <a 
+                href="tel:09994372322" 
+                className="text-xs text-pink-500 font-extrabold hover:underline flex items-center gap-1"
+              >
+                Call Hospital Now &rarr;
+              </a>
+            </div>
+          </div>
+
+          {/* Working Hours Card */}
+          <div className="bg-white rounded-3xl p-6 shadow-md border border-gray-100 flex flex-col justify-between hover:translate-y-[-4px] transition-all duration-300">
+            <div>
+              <div className="p-3 bg-pink-50 text-[#1a4f9c] rounded-2xl w-fit mb-4">
+                <Clock className="w-6 h-6" />
+              </div>
+              <h3 className="font-extrabold text-[#1a4f9c] text-base mb-2">Working Hours</h3>
+              <div className="space-y-1 text-xs text-gray-500 font-semibold">
+                <div className="flex justify-between border-b border-gray-50 pb-1 font-bold text-emerald-700">
+                  <span>Friday - Thursday:</span>
+                  <span>Open 24 hours</span>
+                </div>
+                <p className="text-[10px] text-gray-400 mt-2 font-medium">
+                  Our emergency reception, pediatric ward, and diagnostic laboratory are functional 24 hours daily.
+                </p>
+              </div>
+            </div>
+            <div className="mt-4 pt-4 border-t border-gray-50">
+              <span className="text-xs text-[#1a4f9c] font-black flex items-center gap-1.5">
+                <span className="w-2.5 h-2.5 bg-emerald-500 rounded-full animate-ping"></span>
+                <span>Fully Operational 24/7</span>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div className="container mx-auto px-4 max-w-5xl flex flex-col md:flex-row items-center gap-12">
         {/* Contact Image (Left) */}
         <div className="md:w-1/2 flex justify-center relative">
@@ -75,8 +167,8 @@ export default function Contact({ onSendMessage, messageList }: ContactProps) {
               </div>
             )}
 
-            <h2 className="text-3xl font-extrabold text-center text-[#1a4f9c] mb-2">Get in Touch</h2>
-            <p className="text-center text-[#1a4f9c]/80 text-sm mb-8 font-semibold">Feel free to drop us a line below!</p>
+            <h2 className="text-3xl font-extrabold text-center text-[#1a4f9c] mb-2">Send Message</h2>
+            <p className="text-center text-[#1a4f9c]/80 text-sm mb-8 font-semibold">Have a query? Drop us an inquiry below!</p>
 
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
